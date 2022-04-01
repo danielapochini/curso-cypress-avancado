@@ -120,6 +120,17 @@ describe('Hacker Stories', () => {
         .should('be.visible')
     })
 
+    //não é uma boa prática, pois faz algo que o user não consegue realizar.
+    it.skip('types and submits the form directly', () => {
+      cy.get('#search')
+      .type(newTerm)
+      cy.get('form').submit()
+
+      cy.wait('@getNewTermStories')
+
+      cy.get('.item').should('have.length', 20)
+    })
+
     context('Last searches', () => {
       it('searches via the last searched term', () => {
         cy.get('#search')
@@ -141,7 +152,7 @@ describe('Hacker Stories', () => {
           .should('be.visible')
       })
 
-      it.only('shows a max of 5 buttons for the last searched terms', () => {
+      it('shows a max of 5 buttons for the last searched terms', () => {
         const faker = require('faker')
 
         cy.intercept(
