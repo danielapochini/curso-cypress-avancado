@@ -68,12 +68,7 @@ describe('Hacker Stories', () => {
 
     // Hrm, how would I simulate such errors?
     // Since I still don't know, the tests are being skipped.
-    // TODO: Find a way to test them out.
-    context.skip('Errors', () => {
-      it('shows "Something went wrong ..." in case of a server error', () => { })
-
-      it('shows "Something went wrong ..." in case of a network error', () => { })
-    })
+    // TODO: Find a way to test them out. 
   })
 
   context('Search', () => {
@@ -123,7 +118,7 @@ describe('Hacker Stories', () => {
     //não é uma boa prática, pois faz algo que o user não consegue realizar.
     it.skip('types and submits the form directly', () => {
       cy.get('#search')
-      .type(newTerm)
+        .type(newTerm)
       cy.get('form').submit()
 
       cy.wait('@getNewTermStories')
@@ -164,12 +159,44 @@ describe('Hacker Stories', () => {
           cy.get('#search')
             .clear()
             .type(`${faker.random.word()}{enter}`)
-            cy.wait('@getRandomStories')
-        }) 
+          cy.wait('@getRandomStories')
+        })
 
         cy.get('.last-searches button')
           .should('have.length', 5)
       })
     })
+  })
+})
+
+context.only('Errors', () => {
+  const errorMsg = 'Oops! Tente novamente mais tarde.'
+
+  it('shows "Something went wrong ..." in case of a server error', () => {
+    cy.intercept(
+      'GET',
+      '**/search?**',
+      { statusCode: 500 }
+    ).as('getServerFailure')
+
+    cy.visit('/')
+    cy.wait('@getServerFailure')
+
+    cy.get('p:contains(Something went wrong ...)')
+      .should('be.visible')
+  })
+
+  it('shows "Something went wrong ..." in case of a network error', () => {
+    cy.intercept(
+      'GET',
+      '**/search**',
+      { forceNetworkError: true }
+    ).as('getNetworkFailure')
+
+    cy.visit('/')
+    cy.wait('@getNetworkFailure')
+
+    cy.get('p:contains(Something went wrong ...)')
+      .should('be.visible')
   })
 })
