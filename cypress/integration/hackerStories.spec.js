@@ -49,6 +49,9 @@ describe('Hacker Stories', () => {
 
       cy.wait('@getNewTermStories')
 
+      cy.getLocalStorage('search')
+        .should('be.equal', newTerm)
+
       cy.get(`button:contains(${initialTerm})`)
         .should('be.visible')
         .click()
@@ -84,7 +87,7 @@ describe('Hacker Stories', () => {
           .and('contain', 'Icons made by Freepik from www.flaticon.com')
       })
 
-      context('List of stories', () => { 
+      context('List of stories', () => {
         // Since the API is external,
         // I can't control what it will provide to the frontend,
         // and so, how can I assert on the data?
@@ -160,64 +163,64 @@ describe('Hacker Stories', () => {
 
           })
 
-          it('orders by author', () => { 
+          it('orders by author', () => {
             cy.get('.list-header-button:contains(Author)')
-            .as('authorHeader')
-            .should('be.visible')
-            .click()
+              .as('authorHeader')
+              .should('be.visible')
+              .click()
 
-          cy.get('.item')
-            .first()
-            .should('be.visible')
-            .and('contain', stories.hits[0].author) 
+            cy.get('.item')
+              .first()
+              .should('be.visible')
+              .and('contain', stories.hits[0].author)
 
-          cy.get('@authorHeader')
-            .click()
+            cy.get('@authorHeader')
+              .click()
 
-          cy.get('.item')
-            .first()
-            .should('be.visible')
-            .and('contain', stories.hits[1].author) 
+            cy.get('.item')
+              .first()
+              .should('be.visible')
+              .and('contain', stories.hits[1].author)
           })
 
-          it('orders by comments', () => { 
+          it('orders by comments', () => {
             cy.get('.list-header-button:contains(Comments)')
-            .as('commentsHeader')
-            .should('be.visible')
-            .click()
+              .as('commentsHeader')
+              .should('be.visible')
+              .click()
 
-          cy.get('.item')
-            .first()
-            .should('be.visible')
-            .and('contain', stories.hits[1].num_comments) 
+            cy.get('.item')
+              .first()
+              .should('be.visible')
+              .and('contain', stories.hits[1].num_comments)
 
-          cy.get('@commentsHeader')
-            .click()
+            cy.get('@commentsHeader')
+              .click()
 
-          cy.get('.item')
-            .first()
-            .should('be.visible')
-            .and('contain', stories.hits[0].num_comments) 
+            cy.get('.item')
+              .first()
+              .should('be.visible')
+              .and('contain', stories.hits[0].num_comments)
           })
 
-          it('orders by points', () => { 
+          it('orders by points', () => {
             cy.get('.list-header-button:contains(Points)')
-            .as('pointsHeader')
-            .should('be.visible')
-            .click()
+              .as('pointsHeader')
+              .should('be.visible')
+              .click()
 
-          cy.get('.item')
-            .first()
-            .should('be.visible')
-            .and('contain', stories.hits[1].points) 
+            cy.get('.item')
+              .first()
+              .should('be.visible')
+              .and('contain', stories.hits[1].points)
 
-          cy.get('@pointsHeader')
-            .click()
+            cy.get('@pointsHeader')
+              .click()
 
-          cy.get('.item')
-            .first()
-            .should('be.visible')
-            .and('contain', stories.hits[0].points) 
+            cy.get('.item')
+              .first()
+              .should('be.visible')
+              .and('contain', stories.hits[0].points)
           })
 
         })
@@ -274,8 +277,8 @@ describe('Hacker Stories', () => {
           .should('be.visible')
       })
 
-      
-      it('shows no story when none is returned', () => {  
+
+      it('shows no story when none is returned', () => {
         cy.get('.item').should('not.exist')
       })
 
@@ -291,7 +294,7 @@ describe('Hacker Stories', () => {
       })
 
       context('Last searches', () => {
-        it('shows a max of 5 buttons for the last searched terms', () => {
+        it.only('shows a max of 5 buttons for the last searched terms', () => {
           const faker = require('faker')
 
           cy.intercept(
@@ -301,14 +304,21 @@ describe('Hacker Stories', () => {
           ).as('getRandomStories')
 
           Cypress._.times(6, () => {
+            const randomWord = faker.random.word();
             cy.get('#search')
               .clear()
-              .type(`${faker.random.word()}{enter}`)
+              .type(`${randomWord}{enter}`)
             cy.wait('@getRandomStories')
+            cy.getLocalStorage('search')
+              .should('be.equal', randomWord)
           })
 
-          cy.get('.last-searches button')
-            .should('have.length', 5)
+          //cy.get('.last-searches button')
+          //  .should('have.length', 5)
+
+          cy.get('.last-searches').within(() => {
+            cy.get('button').should('have.length', 5)
+          })
         })
       })
     })
