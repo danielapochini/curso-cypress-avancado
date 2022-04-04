@@ -80,14 +80,14 @@ describe('Hacker Stories', () => {
           .and('contain', 'Icons made by Freepik from www.flaticon.com')
       })
 
-      context('List of stories', () => {
+      context('List of stories', () => { 
         // Since the API is external,
         // I can't control what it will provide to the frontend,
         // and so, how can I assert on the data?
         // This is why this test is being skipped.
-        // TODO: Find a way to test it out.
-        it.only('shows the right data for all rendered stories', () => {
-          const stories = require('../fixtures/stories')
+        // TODO: Find a way to test it out. 
+        const stories = require('../fixtures/stories')
+        it('shows the right data for all rendered stories', () => {
 
           cy.get('.item')
             .first()
@@ -125,14 +125,90 @@ describe('Hacker Stories', () => {
         // and so, how can I test ordering?
         // This is why these tests are being skipped.
         // TODO: Find a way to test them out.
-        context.skip('Order by', () => {
-          it('orders by title', () => { })
+        context('Order by', () => {
+          it('orders by title', () => {
+            cy.get('.list-header-button:contains(Title)')
+              .as('titleHeader')
+              .click()
 
-          it('orders by author', () => { })
+            cy.get('.item')
+              .first()
+              .should('be.visible')
+              .and('contain', stories.hits[0].title)
 
-          it('orders by comments', () => { })
+            cy.get(`.item a:contains(${stories.hits[0].title})`)
+              .should('have.attr', 'href', stories.hits[0].url)
 
-          it('orders by points', () => { })
+            cy.get('@titleHeader')
+              .click()
+
+            cy.get('.item')
+              .first()
+              .should('be.visible')
+              .and('contain', stories.hits[1].title)
+
+            cy.get(`.item a:contains(${stories.hits[1].title})`)
+              .should('have.attr', 'href', stories.hits[1].url)
+
+          })
+
+          it('orders by author', () => { 
+            cy.get('.list-header-button:contains(Author)')
+            .as('authorHeader')
+            .click()
+
+          cy.get('.item')
+            .first()
+            .should('be.visible')
+            .and('contain', stories.hits[0].author) 
+
+          cy.get('@authorHeader')
+            .click()
+
+          cy.get('.item')
+            .first()
+            .should('be.visible')
+            .and('contain', stories.hits[1].author) 
+          })
+
+          it('orders by comments', () => { 
+            cy.get('.list-header-button:contains(Comments)')
+            .as('commentsHeader')
+            .click()
+
+          cy.get('.item')
+            .first()
+            .should('be.visible')
+            .and('contain', stories.hits[1].num_comments) 
+
+          cy.get('@commentsHeader')
+            .click()
+
+          cy.get('.item')
+            .first()
+            .should('be.visible')
+            .and('contain', stories.hits[0].num_comments) 
+          })
+
+          it('orders by points', () => { 
+            cy.get('.list-header-button:contains(Points)')
+            .as('pointsHeader')
+            .click()
+
+          cy.get('.item')
+            .first()
+            .should('be.visible')
+            .and('contain', stories.hits[1].points) 
+
+          cy.get('@pointsHeader')
+            .click()
+
+          cy.get('.item')
+            .first()
+            .should('be.visible')
+            .and('contain', stories.hits[0].points) 
+          })
+
         })
       })
     })
@@ -180,6 +256,11 @@ describe('Hacker Stories', () => {
         cy.get('.item').should('have.length', 2)
         cy.get(`button:contains(${initialTerm})`)
           .should('be.visible')
+      })
+
+      
+      it.only('shows no story when none is returned', () => {  
+        cy.get('.item').should('not.exist')
       })
 
       // não é uma boa prática, pois faz algo que o user não consegue realizar.
