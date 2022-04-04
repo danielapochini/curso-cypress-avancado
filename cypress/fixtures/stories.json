@@ -4,7 +4,7 @@
             "title": "Sample 1",
             "url": "http://example.com/1",
             "author": "Author 1",
-            "num_coments": 34,
+            "num_comments": 34,
             "points": 91,
             "objectID": 0 
         },
@@ -12,7 +12,7 @@
             "title": "Sample 2",
             "url": "http://example.com/2",
             "author": "Author 2",
-            "num_coments": 55,
+            "num_comments": 55,
             "points": 98,
             "objectID": 1
         }
