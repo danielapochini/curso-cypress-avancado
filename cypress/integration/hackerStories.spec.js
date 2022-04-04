@@ -222,7 +222,6 @@ describe('Hacker Stories', () => {
               .should('be.visible')
               .and('contain', stories.hits[0].points)
           })
-
         })
       })
     })
@@ -358,4 +357,21 @@ context('Errors', () => {
     cy.get('p:contains(Something went wrong ...)')
       .should('be.visible')
   })
+})
+
+//it independente de outros contextos
+it.only('shows a "Loading ..." state before showing the results', () => {
+  cy.intercept(
+    'GET',
+    '**/search**',
+    {
+      delay: 1000,
+      fixture: 'stories'
+    }
+  ).as('getDelayedStories')
+
+  cy.visit('/')
+  cy.assertLoadingIsShownAndHidden()
+  cy.wait('@getDelayedStories')
+  cy.get('.item').should('have.length', 2)
 })
