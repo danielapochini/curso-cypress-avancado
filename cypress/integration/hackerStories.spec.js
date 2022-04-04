@@ -293,7 +293,7 @@ describe('Hacker Stories', () => {
       })
 
       context('Last searches', () => {
-        it.only('shows a max of 5 buttons for the last searched terms', () => {
+        it('shows a max of 5 buttons for the last searched terms', () => {
           const faker = require('faker')
 
           cy.intercept(
@@ -360,13 +360,13 @@ context('Errors', () => {
 })
 
 //it independente de outros contextos
-it.only('shows a "Loading ..." state before showing the results', () => {
+it('shows a "Loading ..." state before showing the results', () => {
   cy.intercept(
     'GET',
     '**/search**',
     {
       delay: 1000,
-      fixture: 'stories'
+      fixture: 'stories',
     }
   ).as('getDelayedStories')
 
